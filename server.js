@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({extended : true}));
 
 app.get('/api/customers', (req, res) => {
     connection.query(
-        "select * from CUSTOMER",
+        "select * from CUSTOMER where isDeleted = 0",
         (err, rows, fields) => {
             res.send(rows);
         }
@@ -34,7 +34,7 @@ app.get('/api/customers', (req, res) => {
 });
 app.use('/image', express.static('./upload'));
 app.post('/api/customers', upload.single('image'), (req,res) => {
-    let sql = 'INSERT INTO CUSTOMER VALUES (NULL,?,?,?,?,?)';
+    let sql = 'INSERT INTO CUSTOMER VALUES (NULL,?,?,?,?,?,now(),0)';
 
     let image = '/image/' + req.file.filename;
     let name = req.body.name;
@@ -56,3 +56,13 @@ app.post('/api/customers', upload.single('image'), (req,res) => {
 app.listen(port, () => {
     console.log(`Listening on Port ${port}`);
 });
+
+app.delete('/api/customers/:id', (req,res) => {
+    let sql = 'UPDATE CUSTOMER SET isDeleted = 1 WHERE ID = ?';
+    let params = [req.params.id];
+
+    connection.query(sql, params,
+        (err,rows,fields) => {
+            res.send(rows);
+        })
+})

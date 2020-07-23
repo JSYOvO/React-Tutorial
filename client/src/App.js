@@ -49,7 +49,11 @@ class App extends Component {
     const {completed} = this.state;
     this.setState({completed : completed >= 100 ? 0 : completed + 1});
   }
-
+  stateRefresh = () => {
+    this.callApi()
+    .then(res => this.setState({customers : res}))
+    .catch(err => console.log(err))
+  }
 /* React-JS Life-Cycle
     1. constructor()
     2. componentWillMount()
@@ -72,6 +76,7 @@ class App extends Component {
               <TableCell>생년월일</TableCell>
               <TableCell>성별</TableCell>
               <TableCell>직업</TableCell> 
+              <TableCell>설정</TableCell> 
             </TableRow>
           </TableHead>
           <TableBody>
@@ -85,6 +90,7 @@ class App extends Component {
                   birthday = {data.birthday}
                   gender = {data.gender}
                   job = {data.job}
+                  stateRefresh = {this.stateRefresh}
                 />
               )
             }) : 
